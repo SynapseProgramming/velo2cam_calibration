@@ -47,6 +47,7 @@
 
 using namespace std;
 using namespace cv;
+#define DEBUG true
 
 pcl::PointCloud<pcl::PointXYZ>::Ptr cumulative_cloud;
 cv::Ptr<cv::aruco::Dictionary> dictionary;
@@ -520,7 +521,7 @@ int main(int argc, char **argv) {
   ros::NodeHandle nh_("~");
 
   // Initialize QR dictionary
-  dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
+  dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_4X4_250);
 
   cumulative_cloud =
       pcl::PointCloud<pcl::PointXYZ>::Ptr(new pcl::PointCloud<pcl::PointXYZ>);
