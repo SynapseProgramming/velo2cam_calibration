@@ -20,7 +20,7 @@
 */
 
 /*
-  mono_qr_pattern: Find the circle centers in the color image by making use of
+  mono_qr_pattern: Find the circle centers in the color  by making use of
   the ArUco markers
 */
 
@@ -34,6 +34,7 @@
 #include <pcl_conversions/pcl_conversions.h>
 #include <ros/ros.h>
 #include <sensor_msgs/CameraInfo.h>
+#include <sensor_msgs/CompressedImage.h>
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <std_msgs/Empty.h>
@@ -116,13 +117,13 @@ Eigen::Matrix3f covariance(pcl::PointCloud<pcl::PointXYZ>::Ptr cumulative_cloud,
   return covarianceMatrix;
 }
 
-void imageCallback(const sensor_msgs::ImageConstPtr &msg,
+void imageCallback(const sensor_msgs::CompressedImageConstPtr &msg,
                    const sensor_msgs::CameraInfoConstPtr &left_info) {
   frames_proc_++;
 
   cv_bridge::CvImageConstPtr cv_img_ptr;
   try {
-    cv_img_ptr = cv_bridge::toCvShare(msg);
+    cv_img_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
   } catch (cv_bridge::Exception &e) {
     ROS_ERROR("cv_bridge exception: %s", e.what());
     return;
@@ -198,7 +199,7 @@ std:
     }
   }
 
-  std::vector<int> boardIds{1, 2, 4, 3};  // IDs order as explained above
+  std::vector<int> boardIds{0, 1, 2, 3};  // IDs order as explained above
   cv::Ptr<cv::aruco::Board> board =
       cv::aruco::Board::create(boardCorners, dictionary, boardIds);
 
@@ -393,7 +394,7 @@ std:
       cumulative_cloud->push_back(centers_cloud->at(i));
     }
     frames_used_++;
-    if (DEBUG){
+    if (DEBUG) {
       ROS_INFO("[Mono] %d/%d frames: %ld pts in cloud", frames_used_,
                frames_proc_, cumulative_cloud->points.size());
     }
@@ -554,12 +555,13 @@ int main(int argc, char **argv) {
   nh_.param<string>("cinfo_topic", cinfo_topic,
                     "/stereo_camera/left/camera_info");
 
-  message_filters::Subscriber<sensor_msgs::Image> image_sub(nh_, image_topic,
-                                                            1);
+  message_filters::Subscriber<sensor_msgs::CompressedImage> image_sub(
+      nh_, image_topic, 1);
   message_filters::Subscriber<sensor_msgs::CameraInfo> cinfo_sub(
       nh_, cinfo_topic, 1);
 
-  message_filters::TimeSynchronizer<sensor_msgs::Image, sensor_msgs::CameraInfo>
+  message_filters::TimeSynchronizer<sensor_msgs::CompressedImage,
+                                    sensor_msgs::CameraInfo>
       sync(image_sub, cinfo_sub, 10);
   sync.registerCallback(boost::bind(&imageCallback, _1, _2));
 

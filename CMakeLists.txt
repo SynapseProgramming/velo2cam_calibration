@@ -134,3 +134,17 @@ install(
     cfg
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
+
+install(
+  TARGETS
+  lidar_pattern
+  stereo_pattern
+  mono_qr_pattern
+  velo2cam_calibration
+  v2c_plane_segmentation
+  v2c_disp_masker
+  
+  RUNTIME DESTINATION
+    ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
