@@ -504,6 +504,9 @@ void param_callback(velo2cam_calibration::MonocularConfig &config,
   ROS_INFO("New delta_width_qr_center_: %f", delta_width_qr_center_);
   delta_height_qr_center_ = config.delta_height_qr_center;
   ROS_INFO("New delta_height_qr_center_: %f", delta_height_qr_center_);
+  delta_width_circles_ = config.delta_width_circles;
+  ROS_INFO("New delta_width_circles_: %f", delta_width_circles_);
+  delta_height_circles_ = config.delta_height_circles;
 }
 
 void warmup_callback(const std_msgs::Empty::ConstPtr &msg) {
@@ -538,8 +541,11 @@ int main(int argc, char **argv) {
 
   string csv_name;
 
-  nh.param("delta_width_circles", delta_width_circles_, 0.5);
-  nh.param("delta_height_circles", delta_height_circles_, 0.4);
+  // delta width circles and delta height circles is the distance between the
+  // centre of the board to each circle center
+
+  nh.param("delta_width_circles", delta_width_circles_, 0.7);
+  nh.param("delta_height_circles", delta_height_circles_, 0.21);
   nh_.param("marker_size", marker_size_, 0.20);
   nh_.param("delta_width_qr_center_", delta_width_qr_center_, 0.55);
   nh_.param("delta_height_qr_center_", delta_height_qr_center_, 0.35);
