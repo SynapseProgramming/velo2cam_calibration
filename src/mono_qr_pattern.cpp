@@ -445,12 +445,18 @@ std:
       sensor_msgs::PointCloud2 centers_pointcloud;
       pcl::toROSMsg(*clusters_cloud, centers_pointcloud);
       centers_pointcloud.header = msg->header;
+      centers_pointcloud.header.frame_id = "rotated_camera_front_straight_link";
       if (DEBUG) {
         centers_cloud_pub.publish(centers_pointcloud);
       }
 
       velo2cam_calibration::ClusterCentroids to_send;
+      // to_send.header = msg->header;
       to_send.header = msg->header;
+      std::cout << "header frame id: " << to_send.header.frame_id << std::endl;
+      to_send.header.frame_id = "rotated_camera_front_straight_link";
+      std::cout << "header frame id after: " << to_send.header.frame_id
+                << std::endl;
       to_send.cluster_iterations = frames_used_;
       to_send.total_iterations = frames_proc_;
       to_send.cloud = centers_pointcloud;

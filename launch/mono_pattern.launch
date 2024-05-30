@@ -15,5 +15,5 @@
         <param name="marker_size" value="$(arg marker_size)"/>
     </node>
 
-    <node pkg="tf" type="static_transform_publisher" name="camera_ros_tf_$(arg sensor_id)" args="0 0 0 -1.57079632679 0 -1.57079632679 rotated_$(arg frame_name) $(arg frame_name) 10"/>
+    <!-- <node pkg="tf" type="static_transform_publisher" name="camera_ros_tf_$(arg sensor_id)" args="0 0 0 -1.57079632679 0 -1.57079632679 camera_front_straight_link rotated_camera_front_straight_link 100"/> -->
 </launch>
