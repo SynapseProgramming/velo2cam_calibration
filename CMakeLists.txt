@@ -126,3 +126,11 @@ target_link_libraries(v2c_disp_masker
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
 )
+
+
+install(
+  DIRECTORY
+    launch
+    cfg
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
