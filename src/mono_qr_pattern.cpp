@@ -443,9 +443,25 @@ std:
 
     if (clusters_cloud->points.size() == TARGET_NUM_CIRCLES) {
       sensor_msgs::PointCloud2 centers_pointcloud;
-      pcl::toROSMsg(*clusters_cloud, centers_pointcloud);
+      pcl::PointCloud<pcl::PointXYZ>::Ptr transformed_cloud(
+          new pcl::PointCloud<pcl::PointXYZ>);
+      Eigen::Matrix4f rotation_matrix;
+      rotation_matrix << 6.12323e-17, 6.12323e-17, 1.0, 0, -1.0, 3.7494e-33,
+          6.12323e-17, 0, 0, -1.0, 6.12323e-17, 0, 0, 0, 0, 1;
+
+      for (auto point : clusters_cloud->points) {
+        Eigen::Vector4f point_vector(point.x, point.y, point.z, 1.0);
+        Eigen::Vector4f transformed_point = rotation_matrix * point_vector;
+
+        pcl::PointXYZ pcl_point;
+        pcl_point.x = transformed_point(0);
+        pcl_point.y = transformed_point(1);
+        pcl_point.z = transformed_point(2);
+        transformed_cloud->push_back(pcl_point);
+      }
+      pcl::toROSMsg(*transformed_cloud, centers_pointcloud);
       centers_pointcloud.header = msg->header;
-      centers_pointcloud.header.frame_id = "rotated_camera_front_straight_link";
+      centers_pointcloud.header.frame_id = "camera_front_straight_link";
       if (DEBUG) {
         centers_cloud_pub.publish(centers_pointcloud);
       }
@@ -454,7 +470,7 @@ std:
       // to_send.header = msg->header;
       to_send.header = msg->header;
       std::cout << "header frame id: " << to_send.header.frame_id << std::endl;
-      to_send.header.frame_id = "rotated_camera_front_straight_link";
+      to_send.header.frame_id = "camera_front_straight_link";
       std::cout << "header frame id after: " << to_send.header.frame_id
                 << std::endl;
       to_send.cluster_iterations = frames_used_;
